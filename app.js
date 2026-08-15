@@ -197,10 +197,55 @@ function formatDate(date) {
   });
 }
 
-function addDays(start, offset) {
-  const date = new Date(start);
-  date.setDate(date.getDate() + offset);
+function isWeekend(date) {
+  const day = date.getDay();
+  return day === 0 || day === 6;
+}
+
+function nextWeekday(date) {
+  const next = new Date(date);
+  while (isWeekend(next)) {
+    next.setDate(next.getDate() + 1);
+  }
+  return next;
+}
+
+function addWeekdays(start, offset) {
+  const date = nextWeekday(new Date(start));
+  let added = 0;
+  while (added < offset) {
+    date.setDate(date.getDate() + 1);
+    if (!isWeekend(date)) added += 1;
+  }
   return date;
+}
+
+function weekendRange(fromDate, toDate) {
+  const holidays = [];
+  const cursor = new Date(fromDate);
+  cursor.setDate(cursor.getDate() + 1);
+  while (cursor < toDate) {
+    if (isWeekend(cursor)) holidays.push(new Date(cursor));
+    cursor.setDate(cursor.getDate() + 1);
+  }
+  return holidays;
+}
+
+function appendHoliday(list, holidays) {
+  if (!holidays.length) return;
+  const article = document.createElement("article");
+  article.className = "holiday";
+  const first = holidays[0];
+  const last = holidays[holidays.length - 1];
+  const label =
+    first.getTime() === last.getTime()
+      ? formatDate(first)
+      : `${formatDate(first)} – ${formatDate(last)}`;
+  article.innerHTML = `
+    <strong>Holiday</strong>
+    <p>${label} · Saturday and Sunday off — no course work</p>
+  `;
+  list.appendChild(article);
 }
 
 function currentDayIndex(done) {
@@ -395,7 +440,8 @@ function render() {
     article.className = `day${day.kind === "buffer" ? " buffer" : ""}${
       done[day.id] ? " done" : ""
     }`;
-    const dateLabel = start ? formatDate(addDays(start, index)) : "Date pending";
+    const workDate = start ? addWeekdays(start, index) : null;
+    const dateLabel = workDate ? formatDate(workDate) : "Date pending";
     article.innerHTML = `
       <div class="day-mark">
         <strong>${day.day}</strong>
@@ -415,6 +461,9 @@ function render() {
       </label>
     `;
     list.appendChild(article);
+    if (start && index < DAYS.length - 1) {
+      appendHoliday(list, weekendRange(workDate, addWeekdays(start, index + 1)));
+    }
   });
 
   const { learnDone, bufferDone, pct } = progressSnapshot();
@@ -429,9 +478,13 @@ function render() {
     (bufferDone ? ` · ${bufferDone} buffer day${bufferDone === 2 ? "s" : ""} used` : "");
 
   if (start) {
-    document.getElementById("date-window").textContent = `${formatDate(start)} → ${formatDate(
-      addDays(start, 11)
-    )}`;
+    const first = addWeekdays(start, 0);
+    const last = addWeekdays(start, 11);
+    const shifted = isWeekend(start)
+      ? `Start date is a weekend, so Day 1 moves to ${formatDate(first)}. `
+      : "";
+    document.getElementById("date-window").textContent =
+      `${shifted}${formatDate(first)} → ${formatDate(last)} · weekdays only (Sat–Sun holiday)`;
   } else {
     document.getElementById("date-window").textContent =
       "Set a start date to see calendar dates.";
@@ -440,8 +493,18 @@ function render() {
   const learner = document.getElementById("learner-name").value.trim() || "Sachin Baghele";
   const idx = currentDayIndex(done);
   const today = DAYS[idx];
-  const dateLine = start ? formatDate(addDays(start, idx)) : "Date TBC";
-  const next = DAYS[Math.min(idx + (done[today.id] ? 1 : 0), 11)];
+  const dateLine = start ? formatDate(addWeekdays(start, idx)) : "Date TBC";
+  const nextIdx = Math.min(idx + (done[today.id] ? 1 : 0), 11);
+  const next = DAYS[nextIdx];
+  let nextLine = `Tomorrow: ${next.day} — ${next.theme}`;
+  if (start && nextIdx !== idx) {
+    const gap = weekendRange(addWeekdays(start, idx), addWeekdays(start, nextIdx));
+    if (gap.length) {
+      nextLine = `Next working day (${formatDate(addWeekdays(start, nextIdx))}): ${next.day} — ${next.theme}`;
+    }
+  } else if (start && nextIdx === idx) {
+    nextLine = `Today: ${next.day} — ${next.theme}`;
+  }
 
   document.getElementById("update-text").textContent = `${learner} — Spring Boot / Spring Framework
 Day ${idx + 1} of 12 (${pct}% complete) · ${dateLine}
@@ -449,7 +512,7 @@ Day ${idx + 1} of 12 (${pct}% complete) · ${dateLine}
 Completed: ${today.theme}
 Built / practised: ${today.outcome} (4h video + 3h coding)
 Blocker: none
-Tomorrow: ${next.day} — ${next.theme}
+${nextLine}
 
 Course: ${COURSE}`;
 
