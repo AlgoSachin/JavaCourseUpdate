@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>12-Day Plan of Action · Spring Boot 3 &amp; Spring Framework 6</title>
+    <meta
+      name="description"
+      content="12-day learning plan of action for Master Spring Boot 3 and Spring Framework 6. 10% per day, two buffer days."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Source+Sans+3:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#schedule">Skip to schedule</a>
+
+    <div id="toast" class="toast" hidden>
+      <p class="toast-title"></p>
+      <p class="toast-body"></p>
+    </div>
+
+    <div id="login-modal" class="modal" hidden>
+      <div class="modal-card" role="dialog" aria-labelledby="login-title" aria-modal="true">
+        <h2 id="login-title">Sign in to update progress</h2>
+        <p>
+          Google sign-in is required. Only
+          <strong>sachinbaghele2018@gmail.com</strong> can tick days and change
+          progress. Anyone else can view the plan.
+        </p>
+        <div id="google-btn" class="google-btn"></div>
+        <div id="setup-box" class="setup-box" hidden>
+          <p><strong>One-time setup:</strong> add a Google Client ID in <code>config.js</code>.</p>
+          <ol>
+            <li>Open <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer">Google Cloud Credentials</a>.</li>
+            <li>Create an <strong>OAuth client ID</strong> of type <strong>Web application</strong>.</li>
+            <li>Add this site under Authorized JavaScript origins (for example <code>http://localhost:5500</code> or your Netlify URL). Google sign-in does not work from a <code>file://</code> path.</li>
+            <li>Paste the Client ID into <code>config.js</code> and refresh.</li>
+          </ol>
+        </div>
+        <p id="login-error" class="login-error" hidden></p>
+        <button class="btn ghost" type="button" id="view-only">View plan without signing in</button>
+      </div>
+    </div>
+
+    <header class="topbar">
+      <div class="wrap topbar-inner">
+        <p class="brand">Plan of Action</p>
+        <nav class="nav" aria-label="Page">
+          <a href="#overview">Overview</a>
+          <a href="#schedule">Schedule</a>
+          <a href="#method">Method</a>
+          <a href="#deliverables">Deliverables</a>
+          <a href="#update">Daily update</a>
+        </nav>
+        <div class="auth-slot">
+          <div id="user-chip" class="user-chip" hidden>
+            <img id="user-photo" alt="" width="28" height="28" />
+            <span id="user-email"></span>
+            <button class="btn ghost" type="button" id="sign-out">Sign out</button>
+          </div>
+          <button class="btn" type="button" id="sign-in">Sign in with Google</button>
+          <button class="btn ghost print-btn" type="button" onclick="window.print()">
+            Print / PDF
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <p id="view-banner" class="view-banner" hidden></p>
+
+      <section class="hero">
+        <div class="wrap hero-grid">
+          <div>
+            <p class="eyebrow">Java learning sprint · 12 days</p>
+            <h1>Spring Boot 3 &amp; Spring Framework 6</h1>
+            <p class="lede">
+              Complete
+              <a
+                href="https://www.udemy.com/course/spring-boot-and-spring-framework-tutorial-for-beginners/"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Master Spring Boot 3 &amp; Spring Framework 6 with Java</a
+              >
+              (in28Minutes). Finish <strong>10% of the course each day</strong> for
+              10 days. Days 11 and 12 are buffer for catch-up and demo.
+            </p>
+            <div class="hero-meta">
+              <label class="field">
+                <span>Learner</span>
+                <input id="learner-name" type="text" value="Sachin Baghele" />
+              </label>
+              <label class="field">
+                <span>Start date</span>
+                <input id="start-date" type="date" />
+              </label>
+            </div>
+          </div>
+
+          <aside class="progress-card" id="progress-card">
+            <p class="progress-label">Course progress</p>
+            <p class="progress-value" id="progress-value">0%</p>
+            <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progress-bar">
+              <span class="bar-learn" id="bar-learn"></span>
+              <span class="bar-buffer" id="bar-buffer"></span>
+            </div>
+            <p class="progress-note" id="progress-note">0 of 10 learning days complete</p>
+            <p class="window" id="date-window">Set a start date to see calendar dates.</p>
+            <button class="btn" type="button" id="show-progress">Show progress</button>
+          </aside>
+        </div>
+      </section>
+
+      <section id="overview" class="section">
+        <div class="wrap">
+          <h2>Overview</h2>
+          <div class="stats">
+            <article>
+              <p class="stat-value">12</p>
+              <p class="stat-label">Total days</p>
+            </article>
+            <article>
+              <p class="stat-value">10%</p>
+              <p class="stat-label">Target each learning day</p>
+            </article>
+            <article>
+              <p class="stat-value">~42h</p>
+              <p class="stat-label">Course video length</p>
+            </article>
+            <article>
+              <p class="stat-value">~7h</p>
+              <p class="stat-label">Hours per learning day</p>
+            </article>
+          </div>
+          <p class="callout">
+            This is an intensive sprint. Each learning day is
+            <strong>4 hours of video</strong> plus
+            <strong>3 hours of coding practice</strong> (about 7 hours total).
+            Code along — do not only watch. Buffer days absorb slip, rewatch, and
+            demo prep.
+          </p>
+        </div>
+      </section>
+
+      <section id="schedule" class="section alt">
+        <div class="wrap">
+          <div class="section-head">
+            <h2>Daily schedule</h2>
+            <p>
+              Tick a day when the outcome is done. Only
+              sachinbaghele2018@gmail.com can update progress after Google sign-in.
+            </p>
+          </div>
+          <div id="day-list" class="day-list"></div>
+        </div>
+      </section>
+
+      <section id="method" class="section">
+        <div class="wrap split">
+          <div>
+            <h2>How each learning day works</h2>
+            <p>
+              Watch the assigned sections, type every example, then write a short
+              note: what you built, what was new, and one question.
+            </p>
+            <ol class="checklist">
+              <li>Watch about 10% of the remaining lectures (4 hours of video).</li>
+              <li>Do 3 hours of coding practice and run the project without errors.</li>
+              <li>Note 3 concepts you can explain to a teammate.</li>
+              <li>Send the daily update: day number, %, and any blocker.</li>
+            </ol>
+          </div>
+          <div class="panel">
+            <h3>If behind — skip in this order</h3>
+            <p>Use buffer days first. If still behind, drop extras so core Spring skills stay intact:</p>
+            <ol>
+              <li>Appendix — functional programming and Java new features</li>
+              <li>Gradle — if the team uses Maven</li>
+              <li>Extra AWS demos (EC2 / Lambda) — keep Beanstalk deploy</li>
+              <li>Optional MySQL / Docker lectures already covered earlier</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section id="deliverables" class="section alt">
+        <div class="wrap">
+          <h2>What will be shown after 12 days</h2>
+          <div class="cards">
+            <article class="card">
+              <h3>Todo web app</h3>
+              <p>Spring MVC, JSP, validation, Spring Security login, JPA / H2.</p>
+            </article>
+            <article class="card">
+              <h3>REST API</h3>
+              <p>CRUD, exceptions, Swagger, versioning, JPA relations, basic auth.</p>
+            </article>
+            <article class="card">
+              <h3>Full stack + deploy</h3>
+              <p>React + Spring Boot + JWT, tests, Docker, AWS Beanstalk / S3.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="update" class="section">
+        <div class="wrap">
+          <h2>Daily update for manager</h2>
+          <p class="muted">Filled from today’s progress. Copy and send at end of day.</p>
+          <div class="update-box">
+            <pre id="update-text"></pre>
+            <button class="btn" type="button" id="copy-update">Copy update</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="wrap">
+        <p>
+          Course:
+          <a
+            href="https://www.udemy.com/course/spring-boot-and-spring-framework-tutorial-for-beginners/"
+            target="_blank"
+            rel="noopener noreferrer"
+            >in28Minutes — Master Spring Boot 3 &amp; Spring Framework 6 with Java</a
+          >
+          · 33 sections · ~42 hours. Plan assumes consecutive calendar days.
+        </p>
+      </div>
+    </footer>
+
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
